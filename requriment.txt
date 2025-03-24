@@ -1,0 +1,13 @@
+tensorflow
+opencv-python
+imbalanced-learn
+flask
+mtcnn
+numpy
+pandas
+scikit-learn
+scipy
+matplotlib
+seaborn
+keras
+tensorflowjs
