@@ -18,17 +18,17 @@ MODEL_PATH = "models/deefake_detector.h5"  # Update with correct model path
 def load_deepfake_model(model_path):
     try:
         model = load_model(model_path)
-        print("✅ Model loaded successfully.")
+        print(" Model loaded successfully.")
         return model
     except Exception as e:
-        print(f"❌ Error loading model: {e}")
+        print(f" Error loading model: {e}")
         return None
 
 # Face detection: Try MTCNN first, then fallback to Haar Cascade
 detector = None
 try:
     detector = MTCNN()
-    print("✅ MTCNN loaded successfully.")
+    print(" MTCNN loaded successfully.")
 except:
     print("⚠️ MTCNN failed, switching to Haar Cascade.")
     detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
