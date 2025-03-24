@@ -1,4 +1,5 @@
 🛑 DeepFake Detection System
+
 📖 Table of Contents
 🔹 What is DeepFake?
 🔹 Impact of DeepFake Videos
@@ -18,6 +19,7 @@
 
 🔹 These models create highly realistic fake videos, making it difficult to distinguish real from fake content.
 
+
 ⚠️ Impact of DeepFake Videos
 ❌ Misinformation & Fake News: Used to spread false narratives on social media.
 
@@ -26,6 +28,7 @@
 ❌ Cybersecurity Threat: Fraudulent video content poses a risk to financial institutions and government agencies.
 
 ✅ Detection Mechanisms: Various industries, including film, media, and security agencies, are actively developing DeepFake detection solutions.
+
 
 🎯 Project Objectives
 ✔ Develop an AI-powered DeepFake detection system.
