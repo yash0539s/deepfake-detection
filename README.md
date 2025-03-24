@@ -1,5 +1,7 @@
 DeepFake Detection System
+
 Table of Contents
+
 Introduction
 
 Impact of DeepFake Videos
@@ -26,23 +28,26 @@ Future Improvements
 
 Conclusion
 
-Introduction
+-Introduction
+
 DeepFake refers to AI-generated manipulated videos where a person’s face is replaced with another using deep learning models like Generative Adversarial Networks (GANs).
 
-These videos are highly realistic, making it difficult to distinguish between real and fake content. Our project aims to detect DeepFake videos using VGG16 for feature extraction and CNN for classification.
+These videos are highly realistic, making it difficult to distinguish between real and fake content.
 
-Impact of DeepFake Videos
-Negative Effects:
-Misinformation and fake news are spread on social media.
+This project aims to detect DeepFake videos using VGG16 for feature extraction and CNN for classification.
 
-Celebrity impersonation is misused for scams and fraudulent activities.
+-Impact of DeepFake Videos
 
-Cybersecurity threats arise due to fraudulent video content, affecting financial institutions and government agencies.
+Misinformation & Fake News: Used to spread false narratives on social media.
 
-Countermeasures:
-Various industries, including film, media, and security agencies, are actively developing DeepFake detection solutions to prevent fraud and misinformation.
+Celebrity Impersonation: Misused for scams and fraudulent activities.
 
-Project Objectives
+Cybersecurity Threats: Fraudulent videos pose risks to financial institutions and government agencies.
+
+Various industries, including film, media, and security agencies, are actively developing DeepFake detection solutions.
+
+-Project Objectives
+
 Develop an AI-powered DeepFake detection system.
 
 Train a deep learning model to classify videos as real or fake.
@@ -53,16 +58,24 @@ Analyze manipulated frames using face landmark detection and feature extraction.
 
 Deploy a real-time AI-based solution that can be integrated into social media platforms.
 
-Project Pipeline
-Step	Description
-Step 1	Load the dataset
-Step 2	Extract videos from the dataset
-Step 3	Convert videos into frames (real and fake)
-Step 4	Detect faces in each frame
-Step 5	Extract facial landmarks
-Step 6	Analyze variations in facial landmarks
-Step 7	Classify videos as real or fake
-Pre-processing Workflow
+-Project Pipeline
+
+Step 1: Load the dataset
+
+Step 2: Extract videos from the dataset
+
+Step 3: Convert videos into frames (REAL & FAKE)
+
+Step 4: Detect faces in each frame
+
+Step 5: Extract facial landmarks
+
+Step 6: Analyze variations in facial landmarks
+
+Step 7: Classify videos as REAL or FAKE
+
+-Pre-processing Workflow
+
 Convert video into frames.
 
 Detect faces in each frame.
@@ -73,33 +86,38 @@ Normalize pixel values for deep learning training.
 
 Extract facial landmarks to identify inconsistencies.
 
-Prediction Workflow
-Extract frames from the input video.
+-Prediction Workflow
 
-Detect faces using VGG16 feature extraction.
+Step 1: Extract frames from the input video.
 
-Pass extracted features through a CNN model for classification.
+Step 2: Detect faces using VGG16 feature extraction.
 
-Aggregate frame-wise predictions to classify the entire video as real or fake.
+Step 3: Pass extracted features through a CNN model for classification.
 
-Models Used
+Step 4: Aggregate frame-wise predictions to classify the entire video as real or fake.
+
+-Models Used
+
 VGG16 (Feature Extractor)
-Pretrained on ImageNet dataset.
 
-Extracts high-level features from video frames.
+Pretrained on ImageNet dataset for high-level feature extraction.
+
+Extracts important visual patterns from video frames.
 
 Fine-tuned deeper layers to adapt to DeepFake datasets.
 
 CNN Model (Classifier)
-Convolutional layers extract spatial patterns.
 
-Pooling layers reduce computational complexity.
+Convolutional Layers: Extract spatial patterns.
 
-Fully connected layers classify input as real or fake.
+Pooling Layers: Reduce computational complexity.
 
-Uses sigmoid activation function to output probability between 0 and 1.
+Fully Connected Layers: Classify input as real or fake.
 
-Hyperparameters
+Activation Function: Sigmoid (Outputs probability between 0 and 1).
+
+-Hyperparameters
+
 Optimizer: Adam (Adaptive Learning Rate)
 
 Loss Function: Sparse Categorical Cross-Entropy
@@ -108,53 +126,64 @@ Batch Size: 32
 
 Learning Rate: 0.0001
 
-Epochs: 20
+Epochs: 30
 
 Test Accuracy Achieved: 87%
 
-Deployment
+-Deployment
+
 Backend: Python Flask API
 
 Frontend: HTML, CSS, JavaScript
 
 Processing Time: ~1 minute for a 10-second, 30fps video
 
-Installation and Usage
+-Installation and Usage
+
 Ensure all dependencies are installed before running the application.
 
 Step 1: Install Required Libraries
+
 bash
 Copy
 Edit
 pip install -r requirements.txt
+
 Step 2: Run the Model
+
 bash
 Copy
 Edit
-python main.py
+python app.py
+
 Step 3: Upload a Video for Detection
+
 The model will process each frame.
 
 The final output will be displayed as real or fake.
 
-Technologies Used
+-Technologies Used
+
 Programming Languages: Python, HTML, CSS, JavaScript
 
 Libraries: OpenCV, TensorFlow, Keras, Pandas, NumPy, Seaborn
 
 Deep Learning Models: VGG16, CNN
 
-Deployment: Flask
+Deployment Framework: Flask
 
-Future Improvements
+-Future Improvements
+
 Fine-tuning deeper layers of VGG16 for better feature extraction.
 
 Increasing dataset diversity for improved generalization.
 
-Integrating LSTM for temporal sequence analysis to detect frame inconsistencies over time.
+Integrating LSTM for temporal sequence analysis to detect inconsistencies across frames.
+
+-Conclusion
 
 Conclusion
-We successfully developed a DeepFake Detection Model using VGG16 for feature extraction and CNN for classification.
+Successfully developed a DeepFake Detection Model using VGG16 and CNN.
 
 Our model achieved an accuracy of 87%, making it reliable for real-world applications.
 
