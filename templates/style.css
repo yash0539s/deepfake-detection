@@ -1,0 +1,204 @@
+ /* General Styles */
+ body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+/* Header Styles */
+header {
+    background:#2c3e50;
+    padding: 15px 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+.logo {
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+}
+nav ul li {
+    margin: 0;
+}
+nav ul li a {
+    text-decoration: none;
+    color:white;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background 0.3s, color 0.3s;
+}
+nav ul li a:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.btn-primary {
+    background: #f39c12; /* Orange */
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #e67e22; /* Darker Orange */
+}
+
+/* Hero Section */
+
+
+/* Features Section */
+.section {
+    padding: 60px 20px;
+    text-align: center;
+    margin-top: 50px;
+}
+.upload-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1.5em;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.upload-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.upload-container label {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.upload-container input[type="file"] {
+    border: 2px solid #ddd;
+    padding: 0.5em;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.upload-container button {
+    background: #1a0be4;
+    color: #fff;
+    padding: 0.7em;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.upload-container button:hover {
+    background: #251e0b;
+}
+
+.progress-container {
+    margin-top: 1em;
+    background: #ddd;
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar {
+    background: #4caf50;
+    height: 100%;
+    width: 0;
+    transition: width 0.4s ease;
+}
+
+.result-container {
+    margin-top: 1em;
+    padding: 1em;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+
+footer {
+    background: #2c3e50;
+    padding: 30px 20px;
+    text-align: center;
+    border-top: 1px solid #e2e2e2;
+    box-shadow: 0 -4px 8px rgba(0,0,0,0.1);
+}
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.footer-content .about, .footer-content .social {
+    flex: 1;
+    max-width: 300px;
+}
+.footer-content .social ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.footer-content .social ul li {
+    display: inline;
+    margin: 0 10px;
+}
+.footer-content .social ul li a {
+    color:white;
+    font-size: 20px;
+}
+.footer-content .social ul li a:hover {
+    color: #007bff;
+}
+.footer-bottom {
+    margin-top: 20px;
+    color: white;
+}
+.footer-content h3{
+    color: white;
+}
+.footer-content p{
+    color:lightgray
+}
+
+
