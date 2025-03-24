@@ -154,8 +154,8 @@ Increasing dataset diversity for improved generalization.
 Integrating LSTM for temporal sequence analysis to detect frame inconsistencies over time.
 
 Conclusion
-Successfully developed a DeepFake Detection Model using VGG16 and CNN.
+We successfully developed a DeepFake Detection Model using VGG16 for feature extraction and CNN for classification.
 
-Achieved an accuracy of 87%, making it a reliable solution for real-world applications.
+Our model achieved an accuracy of 87%, making it reliable for real-world applications.
 
-Future improvements will focus on enhancing model accuracy and scalability.
+Further improvements could be made by fine-tuning VGG16 layers, increasing dataset diversity, and integrating LSTM for temporal analysis.
