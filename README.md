@@ -27,11 +27,13 @@ Future Improvements
 Conclusion
 
 Introduction
+
 DeepFake refers to AI-generated manipulated videos where a person’s face is replaced with another using deep learning models like Generative Adversarial Networks (GANs).
 
 These videos are highly realistic, making it difficult to distinguish between real and fake content. Our project aims to detect DeepFake videos using VGG16 for feature extraction and CNN for classification.
 
 Impact of DeepFake Videos
+
 Negative Effects:
 Misinformation and fake news are spread on social media.
 
@@ -43,6 +45,7 @@ Countermeasures:
 Various industries, including film, media, and security agencies, are actively developing DeepFake detection solutions to prevent fraud and misinformation.
 
 Project Objectives
+
 Develop an AI-powered DeepFake detection system.
 
 Train a deep learning model to classify videos as real or fake.
