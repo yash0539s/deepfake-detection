@@ -1,5 +1,7 @@
 DeepFake Detection System
+
 Table of Contents
+
 Introduction
 
 Impact of DeepFake Videos
