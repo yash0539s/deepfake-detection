@@ -1,158 +1,143 @@
-from flask import Flask, render_template, request, jsonify
-import tensorflow as tf
-from tensorflow.keras.models import load_model
-import cv2
-import numpy as np
+from flask import Flask, request, render_template, redirect, url_for, Response
 import os
-import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+import cv2
 from werkzeug.utils import secure_filename
-from mtcnn.mtcnn import MTCNN
 
-app = Flask(__name__, template_folder=os.path.join(os.getcwd(), "templates"))
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Allowed video formats
-ALLOWED_EXTENSIONS = {'mp4', 'mov', 'avi', 'mkv'}
-MODEL_PATH = "models/deefake_detector.h5"  # Update with correct model path
+# Focal Loss
+def focal_loss(alpha=0.25, gamma=2.0):
+    def loss(y_true, y_pred):
+        bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+        pt = tf.where(y_true == 1, y_pred, 1 - y_pred)
+        loss = alpha * (1 - pt) ** gamma * bce
+        return tf.reduce_mean(loss)
+    return loss
 
-# Load deepfake model
-def load_deepfake_model(model_path):
-    try:
-        model = load_model(model_path)
-        print(" Model loaded successfully.")
-        return model
-    except Exception as e:
-        print(f" Error loading model: {e}")
-        return None
+#  Load model
+model = tf.keras.models.load_model(
+    r"D:\deep_fake_hacthon\deepfake_detector_v8.h5",
+    custom_objects={"loss": focal_loss(alpha=0.5, gamma=2.0)}
+)
 
-# Face detection: Try MTCNN first, then fallback to Haar Cascade
-detector = None
-try:
-    detector = MTCNN()
-    print(" MTCNN loaded successfully.")
-except:
-    print("⚠️ MTCNN failed, switching to Haar Cascade.")
-    detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-
-# Preprocess frame for model
+#  Preprocess a single frame
 def preprocess_frame(frame):
-    resized_frame = cv2.resize(frame, (224, 224))  # Resize to model input size
-    frame = resized_frame.astype('float32') / 255.0  # Normalize
-    frame = np.expand_dims(frame, axis=0)  # Add batch dimension
-    return frame
+    frame = cv2.resize(frame, (128, 128))
+    frame = frame / 255.0
+    frame = np.expand_dims(frame, axis=0)
+    return frame.astype(np.float32)
 
-# Predict deepfake score
-def predict_deepfake(model, frame):
-    if model is not None:
-        try:
+#  Predict on video file
+def predict_video_deepfake(video_path, frame_skip=5):
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        return {"error": "Could not open video file."}
+
+    frame_count = 0
+    predictions = []
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        if frame_count % frame_skip == 0:
             processed_frame = preprocess_frame(frame)
-            prediction = model.predict(processed_frame)
-            confidence_score = float(prediction[0][0])  # Convert to float
-            print(f"Confidence Score: {confidence_score:.4f}")  # Log to terminal
-            return confidence_score
-        except Exception as e:
-            print(f"Error during prediction: {e}")
-            return None
+            pred_proba = model.predict(processed_frame)[0][0]
+            predictions.append(pred_proba)
+        frame_count += 1
+
+    cap.release()
+
+    if predictions:
+        avg_proba = np.mean(predictions)
+        label = "Fake" if avg_proba > 0.5 else "Real"
+        return {"label": label, "confidence": float(avg_proba)}
     else:
-        print(" Model is not loaded.")
-        return None
+        return {"error": "No frames processed."}
 
-# Check valid file type
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+#  Predict from webcam
+def predict_webcam():
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        return {"error": "Could not access webcam."}
 
-# Extract faces from frame
-def extract_faces(frame):
-    global detector
-    faces = []
-    
-    # Try MTCNN
-    if isinstance(detector, MTCNN):
-        detected_faces = detector.detect_faces(frame)
-        for face in detected_faces:
-            x, y, w, h = face['box']
-            faces.append(frame[y:y+h, x:x+w])
+    predictions = []
+    frame_count = 0
 
-    # If MTCNN fails, use Haar Cascade
+    while frame_count < 30:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        if frame_count % 5 == 0:
+            processed_frame = preprocess_frame(frame)
+            pred_proba = model.predict(processed_frame)[0][0]
+            predictions.append(pred_proba)
+        frame_count += 1
+
+    cap.release()
+
+    if predictions:
+        avg_proba = np.mean(predictions)
+        label = "Fake" if avg_proba > 0.5 else "Real"
+        confidence = float(avg_proba)
+        return {"label": label, "confidence": confidence}
     else:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        detected_faces = detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-        for (x, y, w, h) in detected_faces:
-            faces.append(frame[y:y+h, x:x+w])
-    
-    return faces
+        return {"error": "No frames processed."}
 
-# Display frame using matplotlib (fix for OpenCV GUI error)
-def show_frame(frame):
-    plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-    plt.axis('off')  # Hide axis for better visualization
-    plt.show()
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/upload', methods=['POST'])
-def upload_video():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
-    if file and allowed_file(file.filename):
-        # Save uploaded file
-        filename = secure_filename(file.filename)
-        file_path = os.path.join('uploads', filename)
-        file.save(file_path)
-
-        print(f"\n Processing Video: {filename}\n")
-
-        # Process video
-        video_capture = cv2.VideoCapture(file_path)
-        confidence_scores = []
-
-        frame_count = 0
-        frame_skip = 3  # Experiment with 3, 4, or 5 for best accuracy
-
-        while video_capture.isOpened():
-            ret, frame = video_capture.read()
-            if not ret:
-                break
-
-            frame_count += 1
-            if frame_count % frame_skip != 0:
-                continue  # Skip frames for performance
-
-            print(f"🖼️ Processing Frame {frame_count}")
-
-            # Extract faces
-            faces = extract_faces(frame)
-            if faces:
-                for face in faces:
-                    confidence = predict_deepfake(model, face)
-                    if confidence is not None:
-                        confidence_scores.append(confidence)
-
-        video_capture.release()
-
-        if confidence_scores:
-            avg_confidence = float(np.mean(confidence_scores))  # Convert to native float
-            confidence_threshold = 0.6  # Fine-tune this threshold
-            result = "Real" if avg_confidence < confidence_threshold else "Fake"
-
-            print("\n Calibration Summary:")
-            print(f"  ➤ Total Faces Processed: {len(confidence_scores)}")
-            print(f"  ➤ Average Confidence Score: {avg_confidence:.4f}")
-            print(f"  ➤ Final Classification: {result.upper()}\n")
-
-            return jsonify({"result": result, "confidence": avg_confidence}), 200
+#  Video stream generator
+def gen_frames():
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        return
+    while True:
+        success, frame = cap.read()
+        if not success:
+            break
         else:
-            print(" No faces detected in the video.")
-            return jsonify({"error": "No faces detected in the video."}), 400
-    else:
-        return jsonify({"error": "Invalid file type. Only video files are allowed."}), 400
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    cap.release()
 
-if __name__ == "__main__":
-    if not os.path.exists('uploads'):
-        os.makedirs('uploads')
-    model = load_deepfake_model(MODEL_PATH)  # Load model at startup
+
+#  Routes
+@app.route('/')
+def home():
+    return render_template('upload.html')
+
+@app.route('/webcam')
+def webcam_page():
+    return render_template('webcam.html')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    mode = request.form.get('mode')
+    
+    if mode == 'upload':
+        file = request.files['video']
+        if file and file.filename != '':
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            result = predict_video_deepfake(filepath, frame_skip=2)
+            return render_template('result.html', result=result)
+        else:
+            return render_template('result.html', result={"error": "No file selected."})
+
+    elif mode == 'webcam':
+        result = predict_webcam()
+        return render_template('result.html', result=result)
+    
+    return render_template('result.html', result={"error": "Invalid mode selected."})
+
+if __name__ == '__main__':
     app.run(debug=True)
