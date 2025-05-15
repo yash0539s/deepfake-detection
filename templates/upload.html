@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deepfake Detector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --main-bg: #1c1c1c;
+            --form-bg: #2a2a2a;
+            --primary-color: #ff6a00;
+            --text-light: #ffffff;
+            --text-muted: #cccccc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--main-bg);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .form-box {
+            background-color: var(--form-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+
+        label {
+            display: inline-block;
+            margin: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        label input[type="radio"] + span {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            transition: 0.3s;
+        }
+
+        input[type="radio"]:checked + span {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 25px auto 15px auto;
+            background: #fff;
+            color: #000;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        input[type="submit"] {
+            padding: 12px 30px;
+            font-size: 16px;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #e35c00;
+        }
+
+        @media (max-width: 600px) {
+            .form-box {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-box">
+        <h1>Deepfake Detection</h1>
+        <form id="detectionForm" action="/predict" method="post" enctype="multipart/form-data">
+            <label>
+                <input type="radio" name="mode" value="upload" checked>
+                <span>Upload Video</span>
+            </label>
+            <label>
+                <input type="radio" name="mode" value="webcam">
+                <span>Use Webcam</span>
+            </label>
+
+            <input type="file" name="video" accept="video/*" id="videoInput">
+            <input type="submit" value="Detect Deepfake">
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('detectionForm');
+        const modeInputs = document.querySelectorAll('input[name="mode"]');
+        const videoInput = document.getElementById('videoInput');
+
+        form.addEventListener('submit', function(e) {
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            if (mode === 'webcam') {
+                e.preventDefault();
+                window.location.href = "/webcam";
+            }
+        });
+
+        modeInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                videoInput.style.display = input.value === 'upload' ? 'block' : 'none';
+            });
+        });
+
+        // Set correct display on load
+        window.onload = () => {
+            const selected = document.querySelector('input[name="mode"]:checked').value;
+            videoInput.style.display = selected === 'upload' ? 'block' : 'none';
+        };
+    </script>
+</body>
+</html>
